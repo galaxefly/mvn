@@ -8,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-
 import static org.junit.Assert.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -33,6 +32,7 @@ class DemoApplicationTests {
             driver.quit();
         }
     }
+
 
     //Проверка заголовка страницы
     @Test
@@ -89,4 +89,58 @@ class DemoApplicationTests {
         assertEquals("URL после перехода не совпадает", "https://mvnrepository.com/popular", currentUrl);
     }
 
+
+    //Проверка наличия на странице заголовка
+    @Test
+    public void testExamplesSectionContent() {
+        WebElement header = driver.findElement(By.xpath("//h1[contains(text(), \"What's New in Maven\")]"));
+        assertTrue(header.isDisplayed());
+        WebElement n = driver.findElement(By.className("sidebar"));
+        assertTrue(n.isEnabled());
+    }
+
+    //Проверка размеров картинки
+    @Test
+    public void testSizePicture(){
+        WebElement picture = driver.findElement(By.className("im-logo"));
+        int weigth = 48;
+        int height = 48;
+        assertEquals(picture.getSize().width,weigth);
+        assertEquals(picture.getSize().height,height);
+    }
+
+    //Проверка footer
+    @Test
+    public void testFooterPresence() {
+        WebElement footer = driver.findElement(By.tagName("footer"));
+        assertTrue(footer.isDisplayed());
+    }
+
+
+    //Проверка ссылки на логотипе
+    @Test
+    public void testLinkInDiv(){
+        WebElement divElement = driver.findElement(By.id("logo"));
+        WebElement links = divElement.findElement(By.tagName("a"));
+        links.getAttribute("href");
+    }
+
+    //Проверка перехода по ссылкам по url
+    @Test
+    public void testURL() throws InterruptedException {
+        String startUrl = driver.getCurrentUrl();
+        // Переходим на следующую страницу
+        WebElement nextPageLink = driver.findElement(By.linkText("Popular Categories"));
+        nextPageLink.click();
+
+        // Ждем загрузки страницы
+        Thread.sleep(1000);
+        String nextUrl = "https://mvnrepository.com/open-source";
+        assertEquals(driver.getCurrentUrl(),nextUrl);
+
+        // Возвращаемся назад
+        driver.navigate().back();
+        Thread.sleep(1000);
+        assertEquals(startUrl, driver.getCurrentUrl());
+    }
 }
